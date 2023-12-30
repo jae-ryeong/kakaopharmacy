@@ -10,7 +10,7 @@ import lombok.*;
 @Getter @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Direction {
+public class Direction {    // view에서 보여줄 데이터들
     
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long directionId;

@@ -27,13 +27,14 @@ public class KakaoApiService {
     private static final String URL = "https://dapi.kakao.com/v2/local/search/address.json";
     private static final String KEY = "d5f0d71ff26e4d59cec7fa873d0e322c";
 
-    public KakaoApiResponseDto test(String address) throws ParseException {
+    public KakaoApiResponseDto KakaoAddressSearch(String address) {
 
         // URI 생성
         URI uri = UriComponentsBuilder
                 .fromHttpUrl(URL)
                 .queryParam("query", address)
                 .build()
+                .encode()
                 .toUri();
         System.out.println("uri = " + uri);
 
@@ -51,6 +52,6 @@ public class KakaoApiService {
         3. HttpEntity
         4. 반환받을 변수 형식
          */
-        return restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, KakaoApiResponseDto.class).getBody();
+        return restTemplate.exchange(uri, HttpMethod.GET, entity, KakaoApiResponseDto.class).getBody(); // uri encode를 안하면 uri.toString()으로 매개변수를 넘겨줘야 작동한고 띄어쓰기 인식X
     }
 }
