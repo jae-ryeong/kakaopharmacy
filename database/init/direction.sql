@@ -8,4 +8,4 @@ create table direction (
                            primary key (direction_id)
 ) engine=InnoDB;
 
-INSERT INTO direction(distance, longitude, latitude)  VALUES (201.4864213 , 126.9911577, 37.4911126);
+/*INSERT INTO direction(distance, longitude, latitude)  VALUES (201.4864213 , 126.9911577, 37.4911126);*/
