@@ -12,7 +12,7 @@ public interface DirectionRepository extends JpaRepository<Direction, Long> {
     /*@Query("select D.distance, D.longitude, D.latitude from DIRECTION D ORDER BY D.distance asc limit 3")
     public List<TargetDto> pharmacyThreeFilter();*/ // ENTITY로 받기
 
-    @Query("select new kakao.search.pharmacy.kakaopharmacy.dto.TargetDto(D.distance, D.longitude, D.latitude) " +
-            "from DIRECTION D ORDER BY D.distance asc limit 3")
+    @Query("select new kakao.search.pharmacy.kakaopharmacy.dto.TargetDto(D.distance, D.pharmacyName, D.longitude, D.latitude) " +
+            "from DIRECTION D where D.distance < 10.0 ORDER BY D.distance asc limit 3")
     public List<TargetDto> pharmacyThreeFilter();   // DTO로 받기
 }
