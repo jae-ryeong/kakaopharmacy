@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -23,12 +24,14 @@ public class SearchController {
     }
 
     @PostMapping("/search")
-    @ResponseBody
-    public List<TargetDto> searchAddress(@RequestParam(name = "address") String address) {
+    public ModelAndView searchAddress(@RequestParam(name = "address") String address) {
 
-        List<TargetDto> targetDtos = distanceService.PharmacyDistance(address);
-        System.out.println("targetDtos = " + targetDtos);
+        List<TargetDto> targetDtos = distanceService.SearchPharmacy(address);
 
-        return targetDtos;
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("output");
+        modelAndView.addObject("outputFormList", targetDtos);
+
+        return modelAndView;
     }
 }
