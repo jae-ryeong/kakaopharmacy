@@ -6,11 +6,11 @@ import kakao.search.pharmacy.kakaopharmacy.dto.TargetDto;
 import kakao.search.pharmacy.kakaopharmacy.entity.Direction;
 import kakao.search.pharmacy.kakaopharmacy.entity.Pharmacy;
 import kakao.search.pharmacy.kakaopharmacy.repository.DirectionRepository;
-import kakao.search.pharmacy.kakaopharmacy.repository.PharmacyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -22,12 +22,13 @@ import java.util.stream.Collectors;
 public class DistanceService {
 
     private final KakaoApiService kakaoApiService;
-
     private final DirectionRepository directionRepository;
-
     private final PharmacyService pharmacyService;
 
-    public List<TargetDto> PharmacyDistance(String Address) {
+    private static final String ROAD_VIEW_URL = "https://map.kakao.com/link/roadview/";
+    private static final String SEARCH_URL =  "https://map.kakao.com/link/map/";
+
+    public List<TargetDto> SearchPharmacy(String Address) {
 
         if(Objects.isNull(Address)) {
             log.error("[DistanceService PharmacyDistance의 Address가 null값 이다.]");
@@ -37,13 +38,16 @@ public class DistanceService {
         KakaoApiResponseDto kakaoApiResponseDto = kakaoApiService.KakaoAddressSearch(Address);
         DocumentDto documentDto = kakaoApiResponseDto.documentList().get(0);
 
+        DecimalFormat form = new DecimalFormat("#.##");
+
         return pharmacyService.findAll().
                 stream().map(pharmacy ->
                         TargetDto.builder()
-                                .distance(HaversineDistance(documentDto.latitude(), documentDto.longitude(), pharmacy.getLatitude(), pharmacy.getLongitude()))
+                                .distance(Math.round(HaversineDistance(documentDto.latitude(), documentDto.longitude(), pharmacy.getLatitude(), pharmacy.getLongitude())))
                                 .targetName(pharmacy.getPharmacyName())
-                                .targetLatitude(pharmacy.getLatitude())
-                                .targetLongitude(pharmacy.getLongitude())
+                                .targetAddress(pharmacy.getPharmacyAddress())
+                                .roadViewUrl(ROAD_VIEW_URL + pharmacy.getLatitude() + "," + pharmacy.getLongitude())
+                                .directionUrl(SEARCH_URL + pharmacy.getPharmacyName() + "," + pharmacy.getLatitude() + "," + pharmacy.getLongitude())
                                 .build())
                 .filter(targetDto -> targetDto.distance() <= 1000)
                 .sorted(Comparator.comparing(TargetDto::distance))

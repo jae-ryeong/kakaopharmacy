@@ -17,6 +17,7 @@ public class Direction {    // view에서 보여줄 데이터들
 
     private Double distance; // 위치와 약국 사이의 거리
 
+    private String pharmacyName;
     private Double longitude;   // 경도, x
     private Double latitude;    // 위도, y
 }
