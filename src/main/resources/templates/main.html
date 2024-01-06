@@ -30,7 +30,7 @@
           <div>
             <label for="address_kakao">주소를 입력하시면 주소 기준으로 가까운 약국의 위치 최대 3곳 추천드립니다.</label>
             <input type="text" class="form-control" id="address_kakao" name="address"
-                   placeholder="주소(지번 또는 도로명)를 입력하세요. ex) 서울특별시 성북구 종암로 10길" readonly>
+                   placeholder="주소(지번 또는 도로명)를 입력하세요. ex) 서울특별시 성북구 종암로 10길" readonly th:required>
           </div>
           <div>
             <button type="submit" class="btn btn-primary" id="btn-save">Search</button>
@@ -55,6 +55,13 @@
       }).open();
     });
   }
+
+  document.querySelector('form').addEventListener('submit', function(e){
+    if(document.getElementById('address_kakao').value == ''){
+      e.preventDefault()//제출완료 페이지로 넘어가는 것 방지
+      alert('주소를 입력해주세요.')
+    }
+  });
 </script>
 </body>
 
