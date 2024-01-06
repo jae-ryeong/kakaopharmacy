@@ -35,10 +35,10 @@
         <td th:text="${output.targetAddress()}">{{pharmacyAddress}}</td>
         <td th:text="|${output.distance()}m|">{{distance}}</td>
         <td>
-            <a th:href="${output.directionUrl()}" th:text="${output.directionUrl()}">{{directionUrl}}</a>
+            <a th:href="${output.directionShortUrl()}" th:text="${output.directionShortUrl()}">{{directionUrl}}</a>
         </td>
         <td>
-            <a th:href="${output.roadViewUrl()}" th:text="${output.roadViewUrl()}">{{roadViewUrl}}</a>
+            <a th:href="${output.roadViewShortUrl()}" th:text="${output.roadViewShortUrl()}">{{roadViewUrl}}</a>
         </td>
     </tr>
 </table>
