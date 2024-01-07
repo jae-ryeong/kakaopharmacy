@@ -2,6 +2,7 @@ package kakao.search.pharmacy.kakaopharmacy.service;
 
 import kakao.search.pharmacy.kakaopharmacy.dto.DocumentDto;
 import kakao.search.pharmacy.kakaopharmacy.dto.KakaoApiResponseDto;
+import kakao.search.pharmacy.kakaopharmacy.dto.OutputDto;
 import kakao.search.pharmacy.kakaopharmacy.dto.TargetDto;
 import kakao.search.pharmacy.kakaopharmacy.entity.Direction;
 import kakao.search.pharmacy.kakaopharmacy.entity.Pharmacy;
@@ -24,11 +25,13 @@ public class DistanceService {
     private final KakaoApiService kakaoApiService;
     private final DirectionRepository directionRepository;
     private final PharmacyService pharmacyService;
+    private final UrlService urlService;
 
     private static final String ROAD_VIEW_URL = "https://map.kakao.com/link/roadview/";
     private static final String SEARCH_URL =  "https://map.kakao.com/link/map/";
+    private static final String SHORT_URL = "http://localhost:8080/dir/";
 
-    public List<TargetDto> SearchPharmacy(String Address) {
+    public List<TargetDto> SearchPharmacy(String Address) { // LongUrl
 
         if(Objects.isNull(Address)) {
             log.error("[DistanceService PharmacyDistance의 Address가 null값 이다.]");
@@ -38,21 +41,27 @@ public class DistanceService {
         KakaoApiResponseDto kakaoApiResponseDto = kakaoApiService.KakaoAddressSearch(Address);
         DocumentDto documentDto = kakaoApiResponseDto.documentList().get(0);
 
-        DecimalFormat form = new DecimalFormat("#.##");
+        return ListTargetDto(documentDto);
+    }
 
-        return pharmacyService.findAll().
-                stream().map(pharmacy ->
-                        TargetDto.builder()
-                                .distance(Math.round(HaversineDistance(documentDto.latitude(), documentDto.longitude(), pharmacy.getLatitude(), pharmacy.getLongitude())))
-                                .targetName(pharmacy.getPharmacyName())
-                                .targetAddress(pharmacy.getPharmacyAddress())
-                                .roadViewUrl(ROAD_VIEW_URL + pharmacy.getLatitude() + "," + pharmacy.getLongitude())
-                                .directionUrl(SEARCH_URL + pharmacy.getPharmacyName() + "," + pharmacy.getLatitude() + "," + pharmacy.getLongitude())
-                                .build())
-                .filter(targetDto -> targetDto.distance() <= 1000)
-                .sorted(Comparator.comparing(TargetDto::distance))
-                .limit(3)
-                .collect(Collectors.toList());
+    public List<OutputDto> ListOutputDto(String Address) {  // ShortUrl
+
+        if(Objects.isNull(Address)) {
+            log.error("[DistanceService PharmacyDistance의 Address가 null값 이다.]");
+            return null;
+        }
+
+        KakaoApiResponseDto kakaoApiResponseDto = kakaoApiService.KakaoAddressSearch(Address);
+        DocumentDto documentDto = kakaoApiResponseDto.documentList().get(0);
+
+        return ListTargetDto(documentDto).stream().map(targetDto ->
+                OutputDto.builder()
+                        .distance(targetDto.distance())
+                        .targetName(targetDto.targetName())
+                        .targetAddress(targetDto.targetAddress())
+                        .roadViewShortUrl(SHORT_URL + urlService.generateShorteningUrl(targetDto.roadViewUrl()))
+                        .directionShortUrl(SHORT_URL + urlService.generateShorteningUrl(targetDto.directionUrl()))
+                        .build()).collect(Collectors.toList());
     }
 
     public void SaveDirection(String Address) { // Address를 받아와서 Direction을 저장만 한다.
@@ -102,5 +111,21 @@ public class DistanceService {
         distance = 2 * radius * Math.asin(squareRoot);
 
         return distance * 1000;  // m 단위로 환산
+    }
+
+    private List<TargetDto> ListTargetDto(DocumentDto documentDto) {
+        return pharmacyService.findAll().
+                stream().map(pharmacy ->
+                        TargetDto.builder()
+                                .distance(Math.round(HaversineDistance(documentDto.latitude(), documentDto.longitude(), pharmacy.getLatitude(), pharmacy.getLongitude())))
+                                .targetName(pharmacy.getPharmacyName())
+                                .targetAddress(pharmacy.getPharmacyAddress())
+                                .roadViewUrl(ROAD_VIEW_URL + pharmacy.getLatitude() + "," + pharmacy.getLongitude())  //
+                                .directionUrl(SEARCH_URL + pharmacy.getPharmacyName() + "," + pharmacy.getLatitude() + "," + pharmacy.getLongitude())
+                                .build())
+                .filter(targetDto -> targetDto.distance() <= 1000)
+                .sorted(Comparator.comparing(TargetDto::distance))
+                .limit(3)
+                .collect(Collectors.toList());
     }
 }
