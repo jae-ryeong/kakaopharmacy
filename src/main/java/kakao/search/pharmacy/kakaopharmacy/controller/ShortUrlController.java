@@ -7,10 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-
 @Slf4j
 @Controller
 @RequiredArgsConstructor
@@ -19,7 +15,7 @@ public class ShortUrlController {
     private final UrlService urlService;
 
     @GetMapping("/dir/{shortUrl}")
-    public String searchUrl(@PathVariable("shortUrl") String shortUrl) throws UnsupportedEncodingException {
+    public String searchUrl(@PathVariable("shortUrl") String shortUrl) {
         String url = urlService.getOriginUrlByShortUrl(shortUrl);
         return "redirect:" + url;
     }
