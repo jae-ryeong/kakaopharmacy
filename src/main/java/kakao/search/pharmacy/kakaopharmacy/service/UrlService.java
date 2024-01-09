@@ -22,9 +22,9 @@ public class UrlService {
     private final UrlRepository urlRepository;
 
     @Transactional
-    public String getOriginUrlByShortUrl(String shortUrl) { // TODO: 에러처리 해주기
+    public String getOriginUrlByShortUrl(String shortUrl) {
         Optional<Url> originUrl = urlRepository.findByShortUrl(shortUrl);
-        String url = originUrl.map(Url::getOriginUrl).orElse(null); // 만약 url이 null 값이면 alert창 띄어주기?? 아니면
+        String url = originUrl.map(Url::getOriginUrl).orElse(null);
 
         log.info("[UrlService getOriginUrlByShortUrl] url : {}", url);
 
@@ -53,7 +53,7 @@ public class UrlService {
                 return shorteningUrl;
             }
         }
-        return "URL을 생성하지 못했습니다.";  // TODO: 에러처리?
+        return "";  // shrotURL이 없으므로 화면에는 localhost8080 url만 출력 -> 클릭시 메인페이지로 이동
     }
 
     @Transactional
