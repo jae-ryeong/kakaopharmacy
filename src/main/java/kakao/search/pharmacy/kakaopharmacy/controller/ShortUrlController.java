@@ -17,6 +17,11 @@ public class ShortUrlController {
     @GetMapping("/dir/{shortUrl}")
     public String searchUrl(@PathVariable("shortUrl") String shortUrl) {
         String url = urlService.getOriginUrlByShortUrl(shortUrl);
+
+        if (url.isBlank()){ // 만약 url이 정상적으로 생성되지 않았다면 메인페이지로 return
+            return "redirect:/";
+        }
+
         return "redirect:" + url;
     }
 
