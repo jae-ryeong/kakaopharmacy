@@ -1,4 +1,4 @@
-# KakaoPharmacy
+# KakaoPharmacy(약국 검색)
 KakaoPharmacy는 Kakao OpenAPI를 사용하여 근처 약국 위치 조회 서비스를 지원하는 웹 애플리케이션입니다.
 
 사용자는 주소를 입력하면 Harversine formula 공식을 적용하여 근처 10km 이내 약국 중 가장 가까운 3곳을 조회해줍니다.
@@ -7,7 +7,6 @@ KakaoPharmacy는 Kakao OpenAPI를 사용하여 근처 약국 위치 조회 서�
 
 ## E-R 다이어그램
 ![Image](https://github.com/user-attachments/assets/f3666812-a89d-4da7-8e1a-7043de4ccdf1)
-## 기술 스택
 
 ### 프론트엔드
 - Thymeleaf
@@ -17,7 +16,7 @@ KakaoPharmacy는 Kakao OpenAPI를 사용하여 근처 약국 위치 조회 서�
 - Redis
 - MariaDB
 
-### DevOps
+### 기타
 - Docker (Redis, MariaDB 컨테이너화)
 
 ## 주요 기능
